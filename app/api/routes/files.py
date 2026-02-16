@@ -41,10 +41,6 @@ async def file_iterator(path: str, chunk_size: int = 1024 * 1024):
         while chunk := await f.read(chunk_size):
             yield chunk
 
-
-# -------------------------
-# Upload
-# -------------------------
 @router.post("/upload")
 @limiter.limit("5/minute")
 async def upload_file(
@@ -97,9 +93,7 @@ async def upload_file(
     )
 
 
-# -------------------------
-# List files (user: own, admin: all)
-# -------------------------
+
 @router.get("", response_model=list[FileResponse])
 async def list_my_files(
     db: AsyncSession = Depends(get_db),
@@ -129,9 +123,6 @@ async def list_my_files(
     ]
 
 
-# -------------------------
-# Signed URL (Pre-signed style)
-# -------------------------
 @router.post("/{file_id}/signed-url")
 async def create_signed_url(
     file_id: int,
@@ -160,10 +151,6 @@ async def create_signed_url(
     }
 
 
-# -------------------------
-# Token-based download (NO JWT REQUIRED)
-# Allow: owner OR any admin
-# -------------------------
 @router.get("/token-download")
 @limiter.limit("30/minute")
 async def download_with_token(
@@ -212,10 +199,6 @@ async def download_with_token(
         headers=headers,
     )
 
-
-# -------------------------
-# Get metadata by id
-# -------------------------
 @router.get("/{file_id}", response_model=FileResponse)
 async def get_file_meta(
     file_id: int,
@@ -241,9 +224,6 @@ async def get_file_meta(
     )
 
 
-# -------------------------
-# Secure download endpoint (JWT required)
-# -------------------------
 @router.get("/{file_id}/download")
 @limiter.limit("30/minute")
 async def download_file(
